@@ -8,16 +8,18 @@
  * Copyright John Wiley & Sons - 2018
  */
 
-import java.util.concurrent.*;
+import java.util.Random;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.RecursiveTask;
 
 public class SumTask extends RecursiveTask<Integer>
 {
     static final int SIZE = 10000;
     static final int THRESHOLD = 1000;
 
-    private int begin;
-    private int end;
-    private int[] array;
+    private final int begin;
+    private final int end;
+    private final int[] array;
 
     public SumTask(int begin, int end, int[] array) {
         this.begin = begin;
@@ -50,14 +52,10 @@ public class SumTask extends RecursiveTask<Integer>
 
 	public static void main(String[] args) {
 		ForkJoinPool pool = new ForkJoinPool();
-		int[] array = new int[SIZE];
 
 		// create SIZE random integers between 0 and 9
-		java.util.Random rand = new java.util.Random();
-
-		for (int i = 0; i < SIZE; i++) {
-			array[i] = rand.nextInt(10);
-		}		
+        Random random = new Random();
+        int[] array = random.ints(0, 9).limit(SIZE).toArray();
 		
 		// use fork-join parallelism to sum the array
 		SumTask task = new SumTask(0, SIZE-1, array);
